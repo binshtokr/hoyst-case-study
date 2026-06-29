@@ -1,112 +1,112 @@
-workspace "Hoyst Tech Challenge - Insolvenzanfechtung MVP" "C4 architecture model for an AI-assisted first analysis of insolvency case documents." {
+workspace "Hoyst Tech Challenge - Insolvenzanfechtung MVP" "C4-Architekturmodell für eine KI-gestützte Erstanalyse von Insolvenzdokumenten." {
 
     !identifiers hierarchical
 
     model {
-        insolvencyProfessional = person "Insolvenzverwalter / Anwalt" "Needs a fast, source-backed first analysis of an insolvency data room. Reviews suspicious transactions and makes the final legal decision."
-        paralegal = person "Juristischer Sachbearbeiter / Analyst" "Supports the insolvency lawyer by reviewing documents, timelines and findings."
+        insolvencyProfessional = person "Insolvenzverwalter / Anwalt" "Benötigt eine schnelle, quellenbasierte Erstanalyse eines Insolvenz-Datenraums. Prüft verdächtige Vorgänge und trifft die finale juristische Entscheidung."
+        paralegal = person "Juristischer Sachbearbeiter / Analyst" "Unterstützt den Insolvenzverwalter oder Anwalt bei der Prüfung von Dokumenten, Zeitachsen und Verdachtsfällen."
 
-        demoDataRoom = softwareSystem "Demo Case Data Room" "Repository folder data/demo-case/ with 23 PDFs: bank statements, contracts, emails, authority letters and court documents." "File system" {
+        demoDataRoom = softwareSystem "Demo-Fall-Datenraum" "Repository-Ordner data/demo-case/ mit 23 PDFs: Kontoauszüge, Verträge, E-Mails, Behördenschreiben und Gerichtsdokumente." "Dateisystem" {
             tags "External"
         }
 
-        insoKnowledgeBase = softwareSystem "InsO Markdown Knowledge Base" "Repository folder data/gesetze/inso/ with one Markdown file per paragraph of the Insolvenzordnung and frontmatter metadata." "Markdown files" {
+        insoKnowledgeBase = softwareSystem "InsO-Markdown-Wissensbasis" "Repository-Ordner data/gesetze/inso/ mit einer Markdown-Datei pro Paragraph der Insolvenzordnung inklusive Frontmatter-Metadaten." "Markdown-Dateien" {
             tags "External"
         }
 
-        llmProvider = softwareSystem "LLM Provider" "Language model used for semantic understanding of emails, contracts and explanations. The model must not make final legal decisions." "LLM API" {
+        llmProvider = softwareSystem "LLM-Anbieter" "Sprachmodell für das semantische Verständnis von E-Mails, Verträgen und Erklärungen. Das Modell darf keine finale juristische Entscheidung treffen." "LLM API" {
             tags "External"
         }
 
-        hoyst = softwareSystem "Hoyst Insolvency Analysis Assistant" "Transforms an unstructured insolvency data room into a structured first case analysis with timeline, suspicious findings, evidence and open questions." {
+        hoyst = softwareSystem "Hoyst Analyse-Assistent für Insolvenzfälle" "Verwandelt einen unstrukturierten Insolvenz-Datenraum in eine strukturierte Erstanalyse mit Timeline, Verdachtsfällen, Belegen und offenen Fragen." {
 
-            cli = container "MVP CLI / Batch Runner" "Runs the first MVP locally against the demo repo and generates a Markdown report." "Python CLI"
-            reviewUi = container "Review UI / Report Viewer" "Optional interface for lawyers to inspect findings, sources, uncertainties and next steps." "Web UI"
+            cli = container "MVP CLI / Batch Runner" "Führt das erste MVP lokal gegen das Demo-Repository aus und erzeugt einen Markdown-Report." "Python CLI"
+            reviewUi = container "Review UI / Report Viewer" "Optionale Oberfläche, in der Anwälte Verdachtsfälle, Quellen, Unsicherheiten und nächste Schritte prüfen können." "Web UI"
 
-            ingestion = container "Document Ingestion" "Loads PDFs and InsO Markdown files, preserves filenames, page numbers and raw text references." "Python"
-            pdfParser = container "PDF Text Extraction / OCR" "Extracts text from machine-readable PDFs and falls back to OCR when needed." "PyMuPDF / OCR"
-            documentClassifier = container "Document Classifier" "Classifies documents as bank statement, email, contract, court document, authority letter or other." "Rules + LLM"
-            keyDateExtractor = container "Key Date Extractor" "Finds relevant dates such as insolvency application date and opening decision date." "Rules + LLM"
-            entityEventExtractor = container "Entity & Event Extraction" "Extracts parties, amounts, payment dates, account movements, emails, claims, warnings and financial distress signals." "Rules + LLM"
-            timelineBuilder = container "Timeline Builder" "Builds a chronological timeline of payments, communications, contracts and legal events." "Python"
-            insoRetrieval = container "InsO Retrieval / RAG" "Retrieves relevant InsO paragraphs for candidate findings, especially §§ 88, 129, 130, 131, 133, 134, 135, 138 and 142 InsO." "Embeddings / Search"
-            legalHeuristicEngine = container "Legal Heuristic Engine" "Applies deterministic checks for time windows, transaction types, counterparties, possible exceptions and missing facts." "Python rules"
-            semanticReasoner = container "Semantic Reasoning Layer" "Uses the LLM to interpret unstructured correspondence, especially knowledge of payment problems, threats, dunning letters and pressure." "LLM orchestration"
-            evidenceLinker = container "Evidence Linker" "Links every finding to concrete documents, page references and supporting snippets. Marks unsupported facts as unknown." "Python"
-            findingRanker = container "Finding Ranker" "Prioritizes suspicious findings by relevance, amount, legal fit, evidence strength and uncertainty." "Rules + scoring"
-            reportGenerator = container "Report Generator" "Generates a Markdown report with executive summary, key dates, timeline, suspicious findings, legal hypotheses, sources, uncertainties and next steps." "Python / Markdown"
+            ingestion = container "Dokumentenaufnahme" "Lädt PDFs und InsO-Markdown-Dateien und bewahrt Dateinamen, Seitenzahlen und Rohtextreferenzen." "Python"
+            pdfParser = container "PDF-Textextraktion / OCR" "Extrahiert Text aus maschinenlesbaren PDFs und nutzt bei Bedarf OCR als Fallback." "PyMuPDF / OCR"
+            documentClassifier = container "Dokumentenklassifikation" "Klassifiziert Dokumente als Kontoauszug, E-Mail, Vertrag, Gerichtsdokument, Behördenschreiben oder Sonstiges." "Regeln + LLM"
+            keyDateExtractor = container "Stichtags-Extraktion" "Findet relevante Daten wie Insolvenzantragsdatum und Eröffnungsdatum." "Regeln + LLM"
+            entityEventExtractor = container "Entitäts- und Ereignisextraktion" "Extrahiert Parteien, Beträge, Zahlungsdaten, Kontobewegungen, E-Mails, Forderungen, Warnhinweise und Signale für Zahlungsschwierigkeiten." "Regeln + LLM"
+            timelineBuilder = container "Timeline Builder" "Erstellt eine chronologische Zeitachse aus Zahlungen, Kommunikation, Verträgen und juristischen Ereignissen." "Python"
+            insoRetrieval = container "InsO Retrieval / RAG" "Ruft relevante InsO-Paragraphen für mögliche Verdachtsfälle ab, insbesondere §§ 88, 129, 130, 131, 133, 134, 135, 138 und 142 InsO." "Embeddings / Suche"
+            legalHeuristicEngine = container "Juristische Heuristik-Engine" "Wendet deterministische Prüfungen für Fristen, Vorgangstypen, Beteiligte, mögliche Ausnahmen und fehlende Fakten an." "Python-Regeln"
+            semanticReasoner = container "Semantische Analyse-Schicht" "Nutzt das LLM, um unstrukturierte Korrespondenz zu interpretieren, insbesondere Kenntnis von Zahlungsschwierigkeiten, Drohungen, Mahnungen und Drucksituationen." "LLM-Orchestrierung"
+            evidenceLinker = container "Beleg-Verknüpfung" "Verknüpft jeden Verdachtsfall mit konkreten Dokumenten, Seitenreferenzen und unterstützenden Textausschnitten. Nicht belegte Fakten werden als unbekannt markiert." "Python"
+            findingRanker = container "Verdachtsfall-Priorisierung" "Priorisiert Verdachtsfälle nach Relevanz, Betrag, juristischer Passung, Belegstärke und Unsicherheit." "Regeln + Scoring"
+            reportGenerator = container "Report Generator" "Erzeugt einen Markdown-Report mit Executive Summary, Stichtagen, Timeline, Verdachtsfällen, juristischen Hypothesen, Quellen, Unsicherheiten und nächsten Schritten." "Python / Markdown"
 
-            caseStore = container "Case Analysis Store" "Stores parsed documents, extracted events, payments, entities, findings and source references." "SQLite or PostgreSQL" {
+            caseStore = container "Fallanalyse-Speicher" "Speichert geparste Dokumente, extrahierte Ereignisse, Zahlungen, Entitäten, Verdachtsfälle und Quellenreferenzen." "SQLite oder PostgreSQL" {
                 tags "Database"
             }
 
-            evidenceIndex = container "Evidence Index / Vector Store" "Indexes document snippets and InsO paragraphs for retrieval and source-backed reasoning." "FAISS or pgvector" {
+            evidenceIndex = container "Beleg-Index / Vektor-Speicher" "Indexiert Dokumentausschnitte und InsO-Paragraphen für Retrieval und quellenbasierte Analyse." "FAISS oder pgvector" {
                 tags "Database"
             }
         }
 
-        insolvencyProfessional -> hoyst.reviewUi "Reviews structured first analysis, suspicious findings and evidence"
-        paralegal -> hoyst.reviewUi "Checks extracted timeline and supporting documents"
-        insolvencyProfessional -> hoyst.cli "Runs or receives MVP report in the interview/demo setup"
+        insolvencyProfessional -> hoyst.reviewUi "Prüft strukturierte Erstanalyse, Verdachtsfälle und Belege"
+        paralegal -> hoyst.reviewUi "Prüft extrahierte Timeline und unterstützende Dokumente"
+        insolvencyProfessional -> hoyst.cli "Startet oder erhält den MVP-Report im Interview- oder Demo-Setup"
 
-        hoyst.cli -> hoyst.ingestion "Starts analysis for demo case"
-        hoyst.ingestion -> demoDataRoom "Loads 23 case PDFs"
-        hoyst.ingestion -> insoKnowledgeBase "Loads InsO Markdown files"
-        hoyst.ingestion -> hoyst.pdfParser "Passes PDFs for text extraction"
-        hoyst.pdfParser -> hoyst.caseStore "Stores extracted text with filename and page references"
+        hoyst.cli -> hoyst.ingestion "Startet Analyse für den Demo-Fall"
+        hoyst.ingestion -> demoDataRoom "Lädt 23 Fall-PDFs"
+        hoyst.ingestion -> insoKnowledgeBase "Lädt InsO-Markdown-Dateien"
+        hoyst.ingestion -> hoyst.pdfParser "Übergibt PDFs zur Textextraktion"
+        hoyst.pdfParser -> hoyst.caseStore "Speichert extrahierten Text mit Dateiname und Seitenreferenzen"
 
-        hoyst.documentClassifier -> hoyst.caseStore "Reads extracted text and writes document types"
-        hoyst.keyDateExtractor -> hoyst.caseStore "Reads court documents and writes insolvency application/opening dates"
-        hoyst.entityEventExtractor -> hoyst.caseStore "Reads classified documents and writes events, payments, entities and distress signals"
-        hoyst.timelineBuilder -> hoyst.caseStore "Reads extracted events and writes chronological timeline"
+        hoyst.documentClassifier -> hoyst.caseStore "Liest extrahierten Text und schreibt Dokumenttypen"
+        hoyst.keyDateExtractor -> hoyst.caseStore "Liest Gerichtsdokumente und speichert Insolvenzantrags- und Eröffnungsdaten"
+        hoyst.entityEventExtractor -> hoyst.caseStore "Liest klassifizierte Dokumente und speichert Ereignisse, Zahlungen, Entitäten und Hinweise auf Zahlungsschwierigkeiten"
+        hoyst.timelineBuilder -> hoyst.caseStore "Liest extrahierte Ereignisse und schreibt chronologische Timeline"
 
-        hoyst.insoRetrieval -> insoKnowledgeBase "Retrieves relevant legal norms"
-        hoyst.insoRetrieval -> hoyst.evidenceIndex "Indexes and searches InsO paragraphs and document snippets"
-        hoyst.legalHeuristicEngine -> hoyst.caseStore "Reads payments, events and key dates"
-        hoyst.legalHeuristicEngine -> hoyst.insoRetrieval "Requests relevant paragraphs for legal hypotheses"
-        hoyst.semanticReasoner -> llmProvider "Asks for semantic interpretation of emails, contracts and explanations"
-        hoyst.semanticReasoner -> hoyst.evidenceIndex "Retrieves supporting snippets"
-        hoyst.evidenceLinker -> hoyst.caseStore "Links findings to source documents, pages and snippets"
-        hoyst.findingRanker -> hoyst.caseStore "Ranks candidate findings by priority and evidence strength"
-        hoyst.reportGenerator -> hoyst.caseStore "Reads timeline, findings, evidence and uncertainties"
-        hoyst.reportGenerator -> hoyst.reviewUi "Publishes report for human review"
-        hoyst.reportGenerator -> insolvencyProfessional "Produces Markdown report as MVP output"
+        hoyst.insoRetrieval -> insoKnowledgeBase "Ruft relevante Rechtsnormen ab"
+        hoyst.insoRetrieval -> hoyst.evidenceIndex "Indexiert und durchsucht InsO-Paragraphen und Dokumentausschnitte"
+        hoyst.legalHeuristicEngine -> hoyst.caseStore "Liest Zahlungen, Ereignisse und Stichtage"
+        hoyst.legalHeuristicEngine -> hoyst.insoRetrieval "Fragt relevante Paragraphen für juristische Hypothesen ab"
+        hoyst.semanticReasoner -> llmProvider "Fragt semantische Interpretation von E-Mails, Verträgen und Erklärungen an"
+        hoyst.semanticReasoner -> hoyst.evidenceIndex "Ruft unterstützende Textausschnitte ab"
+        hoyst.evidenceLinker -> hoyst.caseStore "Verknüpft Verdachtsfälle mit Quelldokumenten, Seiten und Textausschnitten"
+        hoyst.findingRanker -> hoyst.caseStore "Priorisiert Kandidaten nach Wichtigkeit und Belegstärke"
+        hoyst.reportGenerator -> hoyst.caseStore "Liest Timeline, Verdachtsfälle, Belege und Unsicherheiten"
+        hoyst.reportGenerator -> hoyst.reviewUi "Veröffentlicht Report zur menschlichen Prüfung"
+        hoyst.reportGenerator -> insolvencyProfessional "Erzeugt Markdown-Report als MVP-Ergebnis"
     }
 
     views {
         systemContext hoyst "SystemContext" {
             include *
             autolayout lr
-            title "System Context - Hoyst Insolvency Analysis Assistant"
-            description "Hoyst does not replace the lawyer. It accelerates the first review of an insolvency data room by producing a source-backed timeline and suspicious findings."
+            title "Systemkontext - Hoyst Analyse-Assistent für Insolvenzfälle"
+            description "Hoyst ersetzt nicht den Anwalt. Das System beschleunigt die erste Prüfung eines Insolvenz-Datenraums, indem es eine quellenbasierte Timeline und Verdachtsfälle erzeugt."
         }
 
         container hoyst "ContainerView" {
             include *
             autolayout lr
-            title "Container View - MVP Architecture"
-            description "Hybrid pipeline: deterministic rules for dates, amounts and time windows; LLM for semantic understanding of unstructured correspondence; strict source linking for legal traceability."
+            title "Container View - MVP-Architektur"
+            description "Hybride Pipeline: deterministische Regeln für Daten, Beträge und Fristen; LLM für semantisches Verständnis unstrukturierter Korrespondenz; strikte Quellenverknüpfung für juristische Nachvollziehbarkeit."
         }
 
-        dynamic hoyst "MVPFlow" "Main MVP analysis flow" {
-            insolvencyProfessional -> hoyst.cli "Run analysis for data/demo-case"
-            hoyst.cli -> hoyst.ingestion "Load documents"
-            hoyst.ingestion -> demoDataRoom "Read PDFs"
-            hoyst.ingestion -> insoKnowledgeBase "Read InsO Markdown"
-            hoyst.ingestion -> hoyst.pdfParser "Extract text"
-            hoyst.pdfParser -> hoyst.caseStore "Store text with source references"
-            hoyst.documentClassifier -> hoyst.caseStore "Classify document types"
-            hoyst.keyDateExtractor -> hoyst.caseStore "Find insolvency application date"
-            hoyst.entityEventExtractor -> hoyst.caseStore "Extract payments, parties and distress signals"
-            hoyst.timelineBuilder -> hoyst.caseStore "Build timeline"
-            hoyst.legalHeuristicEngine -> hoyst.caseStore "Create candidate findings"
-            hoyst.semanticReasoner -> llmProvider "Interpret context and knowledge signals"
-            hoyst.evidenceLinker -> hoyst.caseStore "Attach evidence and mark uncertainties"
-            hoyst.findingRanker -> hoyst.caseStore "Prioritize findings"
-            hoyst.reportGenerator -> insolvencyProfessional "Return Markdown report"
+        dynamic hoyst "MVPFlow" "Hauptablauf der MVP-Analyse" {
+            insolvencyProfessional -> hoyst.cli "Analyse für data/demo-case starten"
+            hoyst.cli -> hoyst.ingestion "Dokumente laden"
+            hoyst.ingestion -> demoDataRoom "PDFs lesen"
+            hoyst.ingestion -> insoKnowledgeBase "InsO-Markdown lesen"
+            hoyst.ingestion -> hoyst.pdfParser "Text extrahieren"
+            hoyst.pdfParser -> hoyst.caseStore "Text mit Quellenreferenzen speichern"
+            hoyst.documentClassifier -> hoyst.caseStore "Dokumenttypen klassifizieren"
+            hoyst.keyDateExtractor -> hoyst.caseStore "Insolvenzantragsdatum finden"
+            hoyst.entityEventExtractor -> hoyst.caseStore "Zahlungen, Parteien und Hinweise auf Zahlungsschwierigkeiten extrahieren"
+            hoyst.timelineBuilder -> hoyst.caseStore "Timeline erstellen"
+            hoyst.legalHeuristicEngine -> hoyst.caseStore "Verdachtsfälle erzeugen"
+            hoyst.semanticReasoner -> llmProvider "Kontext und Kenntnissignale interpretieren"
+            hoyst.evidenceLinker -> hoyst.caseStore "Belege anhängen und Unsicherheiten markieren"
+            hoyst.findingRanker -> hoyst.caseStore "Verdachtsfälle priorisieren"
+            hoyst.reportGenerator -> insolvencyProfessional "Markdown-Report zurückgeben"
             autolayout lr
-            title "Dynamic View - From Documents to First Legal Review"
-            description "The system turns raw PDFs into a lawyer-reviewable report: suspicious event, possible norm, evidence, uncertainty and next step."
+            title "Dynamic View - Von Dokumenten zur ersten juristischen Prüfung"
+            description "Das System verwandelt rohe PDFs in einen für Anwälte prüfbaren Report: verdächtiger Vorgang, mögliche Norm, Beleg, Unsicherheit und nächster Schritt."
         }
 
         styles {
